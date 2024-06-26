@@ -14,8 +14,6 @@ from pathlib import Path
 import os
 from datetime import timedelta
 from supabase import create_client, Client
-import firebase_admin 
-from firebase_admin import credentials
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -27,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-!xe9s#88$)0((0q8f!bk788m_f_orcam#k20+-l662va2sjoi5'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
