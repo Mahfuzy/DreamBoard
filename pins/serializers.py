@@ -55,7 +55,7 @@ class PinSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pin
         fields = [
-            'id', 'title', 'user', 'description', 'link', 'board', 'image', 'video', 'date_created',
+            'id', 'title', 'user', 'description', 'link', 'board', 'file', 'date_created',
             'tags','tag_list', 'comments', 'likes_count', 'saves_count'
         ]
         
