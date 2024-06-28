@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
+import django_heroku
 from datetime import timedelta
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -208,4 +209,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'accounts.User'
 
+django_heroku.settings(locals())
 
