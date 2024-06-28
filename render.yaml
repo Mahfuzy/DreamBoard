@@ -1,0 +1,90 @@
+services:
+  - type: web
+    name: DreamBoard
+    env: python
+    plan: free
+    buildCommand: 
+      - pip install -r requirements.txt
+      - python manage.py collectstatic --no-input
+      - python manage.py migrate
+    startCommand: gunicorn DreamBoard.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_HOST
+        sync: false
+      - key: SUPABASE_USER
+        sync: false
+      - key: SUPABASE_PASSWORD
+        sync: false
+      - key: SUPABASE_PORT
+        sync: false
+      - key: SUPABASE_DATABASE_NAME
+        sync: false
+      - key: ALLOWED_HOSTS
+        value: 'your-domain.onrender.com'
+      - key: DEBUG
+        value: 'False'
+
+  - type: worker
+    name: DreamBoard-worker
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python manage.py rqworker default
+    envVars:
+      - key: SECRET_KEY
+        sync: false
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_KEY
+        sync: false
+      - key: SUPABASE_HOST
+        sync: false
+      - key: SUPABASE_USER
+        sync: false
+      - key: SUPABASE_PASSWORD
+        sync: false
+      - key: SUPABASE_PORT
+        sync: false
+      - key: SUPABASE_DATABASE_NAME
+        sync: false
+      - key: REDIS_URL
+        sync: false
+
+databases:
+  - name: DreamBoard-db
+    type: postgresql
+    plan: free
+    secrets:
+      - DATABASE_URL
+
+secrets:
+  - name: secret-key
+    key: SECRET_KEY
+  - name: database-url
+    key: DATABASE_URL
+  - name: supabase-url
+    key: SUPABASE_URL
+  - name: supabase-key
+    key: SUPABASE_KEY
+  - name: supabase-host
+    key: SUPABASE_HOST
+  - name: supabase-user
+    key: SUPABASE_USER
+  - name: supabase-password
+    key: SUPABASE_PASSWORD
+  - name: supabase-port
+    key: SUPABASE_PORT
+  - name: supabase-database-name
+    key: SUPABASE_DATABASE_NAME
+  - name: redis-url
+    key: REDIS_URL
