@@ -37,14 +37,6 @@ class Pin(models.Model):
     def __str__(self):
         return self.title
 
-    # def get_type(self):
-    #     file_type = guess_type(self.file.url, strict=True)[0]
-    #     if file_type:
-    #         if 'video' in file_type:
-    #             return 'video'
-    #         elif 'image' in file_type:
-    #             return 'image'
-    #     return 'unknown'
     def clean(self):
         super().clean()
         if self.image and self.video:
@@ -75,15 +67,6 @@ class SavePins(models.Model):
 
     def __str__(self):
         return f'{self.user.username} saved {self.pin.title}'
-
-class UserActivity(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    pin = models.ForeignKey(Pin, on_delete=models.CASCADE)
-    timestamp = models.DateTimeField(default=timezone.now)
-    rating = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
-
-    def __str__(self):
-        return f'{self.user.username} - {self.pin.title} - {self.rating}'
 
 
 class Comment(models.Model):
