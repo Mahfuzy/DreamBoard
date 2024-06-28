@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-from urllib.parse import quote_plus
+import dj_database_url
 from datetime import timedelta
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -152,15 +152,6 @@ DATABASES = {
     }
 }
 
-DATABASE_URL = (
-    f"postgresql://{quote_plus(DATABASES['default']['USER'])}:"
-    f"{quote_plus(DATABASES['default']['PASSWORD'])}@"
-    f"{DATABASES['default']['HOST']}:"
-    f"{DATABASES['default']['PORT']}/"
-    f"{DATABASES['default']['NAME']}"
-)
-
-os.environ['DATABASE_URL'] = DATABASE_URL
 
 
 
