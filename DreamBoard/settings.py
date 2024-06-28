@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-import dj_database_url
 from datetime import timedelta
 from supabase import create_client, Client
 from dotenv import load_dotenv
