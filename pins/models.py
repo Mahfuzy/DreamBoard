@@ -24,8 +24,7 @@ class Pin(models.Model):
     board = models.ForeignKey(
         Board, on_delete=models.CASCADE, related_name='pins_set'
     )
-    image = models.FileField(upload_to='pins/images', null=True, blank=True)
-    video = models.FileField(upload_to='pins/videos', null=True, blank=True)
+    file = models.FileField(upload_to='pins/files', null=True, blank=True)
     title = models.CharField(max_length=250)
     link = models.CharField(max_length=250)
     description = models.TextField()
@@ -36,14 +35,6 @@ class Pin(models.Model):
 
     def __str__(self):
         return self.title
-
-    def clean(self):
-        super().clean()
-        if self.image and self.video:
-            raise ValidationError("You can upload either an image or a video, but not both.")
-        if not self.image and not self.video:
-            raise ValidationError("You must upload either an image or a video.")
-
 
     def get_shareable_url(self):
         return f'http://localhost:8000/pins/{self.pk}/'
