@@ -193,12 +193,13 @@ MEDIA_URL = '/media/'
 STATICFILES_DIRS = [BASE_DIR/'static',]
 STATIC_ROOT = BASE_DIR/'staticfiles'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STORAGES = {
-    # ...
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
+
+DEFAULT_FILE_STORAGE = 'django_storage_supabase.supabase'
+SUPABASE_API_KEY = os.getenv("SUPABASE_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_ROOT_PATH = '/dir/'
+
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
