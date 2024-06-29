@@ -195,23 +195,14 @@ STATIC_ROOT = BASE_DIR/'staticfiles'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
-# DEFAULT_FILE_STORAGE = 'django_storage_supabase.storage.SupabaseStorage'
+
+DEFAULT_FILE_STORAGE = 'django_storage_supabase.supabase'
 SUPABASE_API_KEY = os.getenv('SUPABASE_KEY')
 SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_ROOT_PATH = '/dir/'
 
-STORAGES = {
-    'default': {
-        'BACKEND': 'DreamBoard.storage_backends.SupabaseStorage',
-    },
-    'staticfiles': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
-        'LOCATION': os.path.join(BASE_DIR, 'staticfiles'),
-    },
-}
+STATICFILES_STORAGE = 'django.core.files.storage.FileSystemStorage'
 
-
-STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
