@@ -3,50 +3,16 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import redirect
 from django.http import JsonResponse
-from .models import Pin, Comment, GeneratedImage, CommentReplies, LikePins, SavePins
-from .serializers import PinSerializer, CommentSerializer, GeneratedImageSerializer, CommentRepliesSerializer
+from .models import Pin, Comment, CommentReplies, LikePins, SavePins
+from .serializers import PinSerializer, CommentSerializer, CommentRepliesSerializer
 from .filters import PinFilter
 from accounts.models import Follow
 from rest_framework.response import Response
 import requests
 from django.conf import settings
-from openai import OpenAI
 import logging
 import os
 
-class GenerateImageView(viewsets.ViewSet):
-    permission_classes = [AllowAny]
-
-    def create(self, request):
-        prompt = request.data.get('prompt')
-        if not prompt:
-            return Response({"error": "Prompt is required"}, status=status.HTTP_400_BAD_REQUEST)
-
-        try:
-            api_key = os.environ.get('OPENAI_API_KEY')
-            if not api_key:
-                return Response({"error": "OpenAI API key is missing"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-            client = OpenAI(api_key=api_key) 
-
-            response = client.images.generate(
-                model="dall-e-3",
-                prompt=prompt,
-                size="1024x1024",
-                quality="standard",
-                n=1,
-            )
-
-            if 'data' in response and len(response.data) > 0 and 'url' in response.data[0]:
-                image_url = response.data[0]['url']
-                generated_image = GeneratedImage.objects.create(user=request.user, prompt=prompt, image_url=image_url)
-                return Response(GeneratedImageSerializer(generated_image).data, status=status.HTTP_201_CREATED)
-            else:
-                return Response({"error": "Unexpected response from OpenAI"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        except Exception as e:
-            logging.exception("Error generating image")
-            return Response({"error": "Internal server error"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 class PinListCreate(generics.ListCreateAPIView):
     permission_classes = [AllowAny]  
     queryset = Pin.objects.all()

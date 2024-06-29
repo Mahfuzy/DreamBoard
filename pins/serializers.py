@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Pin, Comment, GeneratedImage, CommentReplies, LikePins, SavePins
+from .models import Pin, Comment, CommentReplies, LikePins, SavePins
 
 class LikePinsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -36,19 +36,8 @@ class CommentSerializer(serializers.ModelSerializer):
         return data
 
 
-class GeneratedImageSerializer(serializers.ModelSerializer):
-    prompt = serializers.CharField(max_length=255)
-    class Meta:
-        model = GeneratedImage
-        fields = ['id', 'user', 'prompt', 'image_url', 'created_at']
-
 class PinSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
-    tags = serializers.ListField(
-        child=serializers.CharField(max_length=100),
-        write_only=True
-    )
-    tag_list = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
     saves_count = serializers.SerializerMethodField()
 
@@ -56,23 +45,8 @@ class PinSerializer(serializers.ModelSerializer):
         model = Pin
         fields = [
             'id', 'title', 'user', 'description', 'link', 'board', 'file', 'date_created',
-            'tags','tag_list', 'comments', 'likes_count', 'saves_count'
+             'comments', 'likes_count', 'saves_count'
         ]
-        
-    def get_tag_list(self, obj):
-        return obj.tags.split(',')
-
-    def create(self, validated_data):
-        tags = validated_data.pop('tags')
-        validated_data['tags'] = ','.join(tags)
-        return super().create(validated_data)
-
-    def update(self, instance, validated_data):
-        tags = validated_data.pop('tags', None)
-        if tags is not None:
-            instance.tags = ','.join(tags)
-        return super().update(instance, validated_data)
-
     def get_likes_count(self, obj):
         return obj.likes.count()
 

@@ -8,15 +8,6 @@ from mimetypes import guess_type
 from django.core.exceptions import ValidationError
 
 
-
-class GeneratedImage(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    prompt = models.CharField(max_length=255)
-    image_url = models.URLField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    
-
-
 class Pin(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='pin_user'
@@ -26,12 +17,10 @@ class Pin(models.Model):
     )
     file = models.FileField(upload_to='pins/files', null=True, blank=True)
     title = models.CharField(max_length=250)
-    link = models.CharField(max_length=250)
+    link = models.CharField(max_length=250, null=True, blank=True)
     description = models.TextField()
     date_created = models.DateTimeField(default=timezone.now)
-    tags = models.CharField(max_length=500, blank=True, default='')
     likes = models.ManyToManyField(User, related_name='liked_pins', blank=True)
-    generated_image = models.ForeignKey(GeneratedImage, on_delete=models.CASCADE, null=True, blank=True, default=None)
 
     def __str__(self):
         return self.title
