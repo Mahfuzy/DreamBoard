@@ -193,25 +193,26 @@ MEDIA_URL = '/media/'
 STATICFILES_DIRS = [BASE_DIR/'static',]
 STATIC_ROOT = BASE_DIR/'staticfiles'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# DEFAULT_FILE_STORAGE = 'django_storage_supabase.SupabaseStorage'
-
 STORAGES = {
+    # ...
     'default': {
         'BACKEND': 'django_storage_supabase.SupabaseStorage',
-        'SUPABASE_API_KEY': os.getenv('SUPABASE_KEY'),
+        'SUPABASE_API_KEY': os.getenv('SUPABASE_API_KEY'),
         'SUPABASE_URL': os.getenv('SUPABASE_URL'),
         'SUPABASE_ROOT_PATH': '/uploads/',
+        # Add other optional settings as needed
     },
-    'staticfiles': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
-        'LOCATION': os.path.join(BASE_DIR, 'static'),
-    },
-    'mediafiles': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',
-        'LOCATION': os.path.join(BASE_DIR, 'media'),
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+DEFAULT_FILE_STORAGE = 'django_storage_supabase.supabase'
+SUPABASE_API_KEY = os.getenv("SUPABASE_KEY")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_ROOT_PATH = '/dir/'
+
+
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
