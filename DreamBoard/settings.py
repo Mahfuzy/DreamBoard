@@ -204,12 +204,12 @@ STORAGES = {
         'SUPABASE_ROOT_PATH': '/uploads/',
     },
     'staticfiles': {
-        'BACKEND': 'django.core.files.storage.FileSystemStorage',  # Example: Change this to your actual static files backend
-        'LOCATION': 'DreamBoardstatic',  
-        'OPTIONS': {
-            'location': 'DreamBoard/static',  
-        },
-        
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        'LOCATION': os.path.join(BASE_DIR, 'static'),
+    },
+    'mediafiles': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+        'LOCATION': os.path.join(BASE_DIR, 'media'),
     },
 }
 
