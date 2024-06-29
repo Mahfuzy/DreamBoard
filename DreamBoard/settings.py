@@ -202,10 +202,7 @@ SUPABASE_ROOT_PATH = '/dir/'
 
 STORAGES = {
     'default': {
-        'BACKEND': 'django_storage_supabase.supabase',
-        'SUPABASE_API_KEY': SUPABASE_API_KEY,
-        'SUPABASE_URL': SUPABASE_URL,
-        'SUPABASE_ROOT_PATH': SUPABASE_ROOT_PATH,
+        'BACKEND': 'DreamBoard.storage_backends.SupabaseStorage',
     },
     'staticfiles': {
         'BACKEND': 'django.core.files.storage.FileSystemStorage',
