@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import Profile, ProfileDetails, UserView, FollowUser, UnfollowUser, FollowersCount, FollowersList, FollowingList, UserDetails, RegisterAPIView, LoginAPIView, LogoutAPIView, FollingCount,  ChatRoomViewSet,  MessageViewSet
+from .views import Profile, ProfileDetails, UserView, FollowUser, UnfollowUser, FollowersCount, FollowersList, FollowingList, UserDetails, RegisterAPIView, LogoutAPIView, FollingCount,  ChatRoomViewSet,  MessageViewSet, ChangePasswordView 
 router = DefaultRouter()
 router.register(r'chatrooms', ChatRoomViewSet)
 router.register(r'messages', MessageViewSet)
@@ -9,8 +9,8 @@ router.register(r'messages', MessageViewSet)
 urlpatterns = [
     path('users/', UserView.as_view(), name='users'),
     path('signup/', RegisterAPIView.as_view(), name='signup'),
-    path('login/', LoginAPIView.as_view(), name='login'),
     path('logout/', LogoutAPIView.as_view(), name='logout'),
+    path('change_password/', ChangePasswordView.as_view(), name='change_password'),
     path('users/<int:pk>/', UserDetails.as_view(), name='user-details'),
     path('profile/', Profile.as_view(), name='profile'),
     path('profile/<int:pk>/', ProfileDetails.as_view(), name='profile-details'),

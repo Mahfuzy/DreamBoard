@@ -7,10 +7,12 @@ from accounts.models import Follow
 from django.http import JsonResponse
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 # Create your views here.
 
 class BoardListCreate(generics.ListCreateAPIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
@@ -29,5 +31,8 @@ class BoardListCreate(generics.ListCreateAPIView):
         return JsonResponse({'boards': list(boards.values())})
 
 class BoardDetails(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     queryset = Board.objects.all()
     serializer_class = BoardSerializer
+

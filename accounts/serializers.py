@@ -6,7 +6,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ('id', 'email', 'username')
         read_only_fields = ('id',)
-
+        
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
@@ -22,6 +22,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+class ResetPasswordEmailSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
 class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
 

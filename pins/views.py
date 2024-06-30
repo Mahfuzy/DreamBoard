@@ -8,13 +8,11 @@ from .serializers import PinSerializer, CommentSerializer, CommentRepliesSeriali
 from .filters import PinFilter
 from accounts.models import Follow
 from rest_framework.response import Response
-import requests
-from django.conf import settings
-import logging
-import os
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class PinListCreate(generics.ListCreateAPIView):
-    permission_classes = [AllowAny]  
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated] 
     queryset = Pin.objects.all()
     serializer_class = PinSerializer
     filterset_class = PinFilter
@@ -40,7 +38,8 @@ class PinListCreate(generics.ListCreateAPIView):
             
 
 class LikePin(APIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated] 
 
     def post(self, request, pin_id):
         try:
@@ -64,7 +63,8 @@ class LikePin(APIView):
 
 
 class SavePin(APIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated] 
 
     def post(self, request, pin_id):
         try:
@@ -86,6 +86,7 @@ class SavePin(APIView):
 
         return Response({'message': message}, status=status.HTTP_200_OK)
 class UserCreatedPins(generics.ListAPIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated] 
     serializer_class = PinSerializer
 
@@ -94,33 +95,39 @@ class UserCreatedPins(generics.ListAPIView):
         return Pin.objects.filter(user=user)
 
 class UserSavedPins(generics.ListAPIView):
-    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated] 
     serializer_class = PinSerializer
 
     def get_queryset(self):
         user = self.request.user
         return Pin.objects.filter(savepins__user=user)
 class PinDetails(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated] 
     queryset = Pin.objects.all()
     serializer_class = PinSerializer
 
 class CommentListCreate(generics.ListCreateAPIView):
-    queryset = Comment.objects.all()
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]  
+    queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     
 class CommentRepliesCreate(generics.ListCreateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]  
     queryset = CommentReplies.objects.all()
-    permission_classes = [IsAuthenticated]
     serializer_class = CommentRepliesSerializer
     
 class CommentDetails(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]  
     queryset = Comment.objects.all()
-    permission_classes = [IsAuthenticated]
     serializer_class = CommentSerializer
     
 class CommentReplyDetails(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]  
     queryset = CommentReplies.objects.all()
-    permission_classes = [IsAuthenticated]
     serializer_class = CommentRepliesSerializer
