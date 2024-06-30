@@ -8,6 +8,7 @@ from mimetypes import guess_type
 from django.core.exceptions import ValidationError
 
 
+
 class Pin(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='pin_user'
@@ -15,15 +16,24 @@ class Pin(models.Model):
     board = models.ForeignKey(
         Board, on_delete=models.CASCADE, related_name='pins_set'
     )
-    file = models.FileField(upload_to='pins/files', null=True, blank=True)
+    image = models.FileField(upload_to='pins/images', null=True, blank=True)
+    video = models.FileField(upload_to='pins/videos', null=True, blank=True)
     title = models.CharField(max_length=250)
-    link = models.CharField(max_length=250, null=True, blank=True)
+    link = models.CharField(max_length=250, null=True)
     description = models.TextField()
     date_created = models.DateTimeField(default=timezone.now)
     likes = models.ManyToManyField(User, related_name='liked_pins', blank=True)
 
     def __str__(self):
         return self.title
+
+    def clean(self):
+        super().clean()
+        if self.image and self.video:
+            raise ValidationError("You can upload either an image or a video, but not both.")
+        if not self.image and not self.video:
+            raise ValidationError("You must upload either an image or a video.")
+
 
     def get_shareable_url(self):
         return f'http://localhost:8000/pins/{self.pk}/'
