@@ -44,7 +44,7 @@ class PinSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pin
         fields = [
-            'id', 'title', 'user', 'description', 'link', 'board', 'image', 'video' 'date_created',
+            'id', 'title', 'user', 'description', 'link', 'board', 'image', 'video', 'date_created',
              'comments', 'likes_count', 'saves_count'
         ]
     def get_likes_count(self, obj):
