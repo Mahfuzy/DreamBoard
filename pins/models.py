@@ -16,8 +16,8 @@ class Pin(models.Model):
     board = models.ForeignKey(
         Board, on_delete=models.CASCADE, related_name='pins_set'
     )
-    image = models.FileField(upload_to='pins/images', null=True, blank=True)
-    video = models.FileField(upload_to='pins/videos', null=True, blank=True)
+    image = models.FileField(upload_to='pins/images', blank=True)
+    video = models.FileField(upload_to='pins/videos', blank=True)
     title = models.CharField(max_length=250)
     link = models.CharField(max_length=250, null=True)
     description = models.TextField()
