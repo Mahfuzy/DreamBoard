@@ -76,7 +76,7 @@ class LoginAPIView(views.APIView):
                 value=str(refresh),
                 httponly=True,
                 samesite='Lax',  # Allow cross-site cookies
-                secure=False,  # Ensure cookies are sent over HTTPS
+                secure=True,  # Ensure cookies are sent over HTTPS
             )
 
             response.set_cookie(
@@ -84,7 +84,7 @@ class LoginAPIView(views.APIView):
                 value=str(refresh.access_token),
                 httponly=True,
                 samesite='None',  # Allow cross-site cookies
-                secure=False,  # Ensure cookies are sent over HTTPS
+                secure=True,  # Ensure cookies are sent over HTTPS
             )
             return response
         else:
