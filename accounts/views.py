@@ -60,7 +60,7 @@ class LoginAPIView(views.APIView):
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
         password = request.data.get('password')
-        user = authenticate(email=email, password=password)
+        user = authenticate(request, username=email, password=password)
         
         if user is not None:
             if not user.is_active:
@@ -69,6 +69,8 @@ class LoginAPIView(views.APIView):
             refresh = RefreshToken.for_user(user)
             response = Response({
                 'detail': 'Login successful',
+                'access_token': str(refresh.access_token),
+                'refresh_token': str(refresh),
             }, status=status.HTTP_200_OK)
 
             response.set_cookie(
