@@ -75,7 +75,7 @@ class LoginAPIView(views.APIView):
                 key='refresh_token',
                 value=str(refresh),
                 httponly=True,
-                samesite='Lax',  # Allow cross-site cookies
+                samesite='None',  # Allow cross-site cookies
                 secure=True,  # Ensure cookies are sent over HTTPS
             )
 
