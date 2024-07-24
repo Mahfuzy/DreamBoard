@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', 'dreamboard.onrender.com']
 
@@ -39,11 +39,6 @@ REST_FRAMEWORK = {
     ),
 }
 
-SESSION_COOKIE_SECURE = False  # Only for development, ensure this is True in production
-CSRF_COOKIE_SECURE = False  # Only for development, ensure this is True in production
-
-SESSION_COOKIE_SAMESITE = 'Lax'  # 'Strict' is also an option
-CSRF_COOKIE_SAMESITE = 'Lax'  # 'Strict' is also an option
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
@@ -94,9 +89,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Ensure this is correctly placed
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -159,8 +155,8 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'DreamBoard.wsgi.application'
-ASGI_APPLICATION = 'DreamBoard.asgi.application'
+WSGI_APPLICATION = 'DreamBoard.wsgi.application'
+# ASGI_APPLICATION = 'DreamBoard.asgi.application'
 
 # CHANNEL_LAYERS = {
 #     "default": {
@@ -181,28 +177,28 @@ ASGI_APPLICATION = 'DreamBoard.asgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# SUPABASE_URL = os.getenv('SUPABASE_URL')
-# SUPABASE_KEY = os.getenv('SUPABASE_KEY')
-# supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-# OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv("SUPABASE_DATABASE_NAME"),
-#         'USER': os.getenv("SUPABASE_USER"),
-#         'PASSWORD': os.getenv("SUPABASE_PASSWORD"),
-#         'HOST': os.getenv("SUPABASE_HOST"),
-#         'PORT': os.getenv("SUPABASE_PORT"),
+#         'NAME': os.getenv('POSTGRESQL_DATABASE_NAME'),
+#         'USER': os.getenv('POSTGRESQL_USER'),
+#         'PASSWORD': os.getenv('POSTGRESQL_PASSWORD'),
+#         'HOST': os.getenv('POSTGRESQL_HOST'),
+#         'PORT': os.getenv('POSTGRESQL_PORT'),
 #     }
 # }
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'DreamBoard',
+        'USER': 'Mahfuz',
+        'PASSWORD': 'dinocharge',
+        'HOST': 'localhost',
+        'PORT': '5432',
+    }
+}
 
 
 
@@ -241,26 +237,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
+
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / "staticfiles"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+MEDIA_ROOT = BASE_DIR / 'media'
 
-
-
-
+# Configure storages
 STORAGES = {
-    "default": {
-        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    'default': {
+        'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage',
     },
-    # "staticfiles": {
-    #     "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
-    # },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    'staticfiles': {
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
     },
 }
+
+
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': os.getenv('CLOUDINARY_NAME'),
