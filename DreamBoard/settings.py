@@ -89,7 +89,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -177,27 +177,27 @@ ASGI_APPLICATION = 'DreamBoard.asgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('POSTGRESQL_DATABASE_NAME'),
-#         'USER': os.getenv('POSTGRESQL_USER'),
-#         'PASSWORD': os.getenv('POSTGRESQL_PASSWORD'),
-#         'HOST': os.getenv('POSTGRESQL_HOST'),
-#         'PORT': os.getenv('POSTGRESQL_PORT'),
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'DreamBoard',
-        'USER': 'Mahfuz',
-        'PASSWORD': 'dinocharge',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        'NAME': os.getenv('SUPABASE_DATABASE_NAME'),
+        'USER': os.getenv('SUPABASE_USER'),
+        'PASSWORD': os.getenv('SUPABASE_PASSWORD'),
+        'HOST': os.getenv('SUPABASE_HOST'),
+        'PORT': os.getenv('SUPABASE_PORT'),
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'DreamBoard',
+#         'USER': 'Mahfuz',
+#         'PASSWORD': 'dinocharge',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 
 
 
@@ -252,6 +252,9 @@ STORAGES = {
     "staticfiles": {
         "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
+    # "staticfiles": {
+    #     "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    # }
 }
 
 
