@@ -14,7 +14,9 @@ class Pin(models.Model):
         User, on_delete=models.CASCADE, related_name='pin_user'
     )
     board = models.ForeignKey(
-        Board, on_delete=models.CASCADE, related_name='pins_set'
+        Board, on_delete=models.CASCADE, related_name='pins_set',
+        blank=True,
+        null=True
     )
     image = models.ImageField(upload_to='pins/images', null=False, blank=True)
     video = models.FileField(upload_to='pins/videos', null=False, blank=True)
