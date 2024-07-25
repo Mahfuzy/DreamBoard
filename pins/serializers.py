@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from .models import Pin, Comment, CommentReplies, LikePins, SavePins
+from accounts.serializers import ProfileSerializer
 
 class LikePinsSerializer(serializers.ModelSerializer):
+    
     class Meta:
         model = LikePins
         fields = ['user', 'pin']
@@ -13,6 +15,7 @@ class SavePinsSerializer(serializers.ModelSerializer):
 
 
 class CommentRepliesSerializer(serializers.ModelSerializer):
+    user = ProfileSerializer(read_only=True)
     replies = serializers.SerializerMethodField()
 
     class Meta:
@@ -23,6 +26,7 @@ class CommentRepliesSerializer(serializers.ModelSerializer):
         return CommentRepliesSerializer(obj.replies.all(), many=True).data
 
 class CommentSerializer(serializers.ModelSerializer):
+    user = ProfileSerializer(read_only=True)
     replies = CommentRepliesSerializer(many=True, read_only=True)
 
     class Meta:
@@ -37,9 +41,11 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class PinSerializer(serializers.ModelSerializer):
+    user = ProfileSerializer(read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
     likes_count = serializers.SerializerMethodField()
     saves_count = serializers.SerializerMethodField()
+    
 
     class Meta:
         model = Pin
