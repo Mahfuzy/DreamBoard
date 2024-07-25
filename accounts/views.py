@@ -54,7 +54,6 @@ class ActivateAPIView(views.APIView):
         else:
             return Response({'error': 'Activation link is invalid!'}, status=status.HTTP_400_BAD_REQUEST)
         
-
 class LoginAPIView(views.APIView):
     permission_classes = [AllowAny]
 
@@ -68,51 +67,30 @@ class LoginAPIView(views.APIView):
                 return Response({'detail': 'Account is not active. Please verify your email.'}, status=status.HTTP_401_UNAUTHORIZED)
 
             refresh = RefreshToken.for_user(user)
-            return Response({
+            response = Response({
                 'detail': 'Login successful',
                 'access_token': str(refresh.access_token),
                 'refresh_token': str(refresh),
             }, status=status.HTTP_200_OK)
+
+            response.set_cookie(
+                key='refresh_token',
+                value=str(refresh),
+                httponly=True,
+                samesite='None',  # Allow cross-site cookies
+                secure=True,  # Ensure cookies are sent over HTTPS
+            )
+
+            response.set_cookie(
+                key='access_token',
+                value=str(refresh.access_token),
+                httponly=True,
+                samesite='None',  # Allow cross-site cookies
+                secure=True,  # Ensure cookies are sent over HTTPS
+            )
+            return response
         else:
             return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-        
-# class LoginAPIView(views.APIView):
-#     permission_classes = [AllowAny]
-
-#     def post(self, request, *args, **kwargs):
-#         email = request.data.get('email')
-#         password = request.data.get('password')
-#         user = authenticate(request, username=email, password=password)
-        
-#         if user is not None:
-#             if not user.is_active:
-#                 return Response({'detail': 'Account is not active. Please verify your email.'}, status=status.HTTP_401_UNAUTHORIZED)
-
-#             refresh = RefreshToken.for_user(user)
-#             response = Response({
-#                 'detail': 'Login successful',
-#                 'access_token': str(refresh.access_token),
-#                 'refresh_token': str(refresh),
-#             }, status=status.HTTP_200_OK)
-
-#             response.set_cookie(
-#                 key='refresh_token',
-#                 value=str(refresh),
-#                 httponly=True,
-#                 samesite='None',  # Allow cross-site cookies
-#                 secure=True,  # Ensure cookies are sent over HTTPS
-#             )
-
-#             response.set_cookie(
-#                 key='access_token',
-#                 value=str(refresh.access_token),
-#                 httponly=True,
-#                 samesite='None',  # Allow cross-site cookies
-#                 secure=True,  # Ensure cookies are sent over HTTPS
-#             )
-#             return response
-#         else:
-#             return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
         
 class LogoutAPIView(views.APIView):
     authentication_classes = [JWTAuthentication]
