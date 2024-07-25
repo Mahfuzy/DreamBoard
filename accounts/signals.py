@@ -3,14 +3,7 @@ from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.urls import reverse
 from django_rest_passwordreset.signals import reset_password_token_created
-from .models import Profile, User
 
-@receiver(post_save, sender=User)
-def create_or_update_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-    else:
-        instance.profile.save()
 
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):

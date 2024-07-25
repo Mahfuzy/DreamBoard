@@ -32,21 +32,14 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
-    objects = CustomUserManager()
-
-    def __str__(self):
-        return self.username
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     profile_pic = models.ImageField(upload_to='profile_pics', blank=True, null=True)
     bio = models.TextField(null=True, blank=True)
     website = models.URLField(null=True, blank=True)
 
+    objects = CustomUserManager()
     def __str__(self):
-        return f'{self.user.username} Profile'
-    
+        return f'{self.username} Profile'
+
 class Follow(models.Model):
     follower = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='following', on_delete=models.CASCADE)
     followed_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='followers', on_delete=models.CASCADE)

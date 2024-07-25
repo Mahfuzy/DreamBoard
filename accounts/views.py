@@ -1,8 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import views, generics, status,  viewsets
 from rest_framework.response import Response
-from .models import Follow, Profile as UserProfile, User
-from .serializers import ProfileSerializer, UserSerializer, RegisterSerializer, ChangePasswordSerializer
+from .models import Follow, User
+from .serializers import UserSerializer, RegisterSerializer, ChangePasswordSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
@@ -152,21 +152,9 @@ class UserDetails(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    lookup_field = 'username'
     def get_object(self):
         return self.request.user
 
-class Profile(generics.ListCreateAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    queryset = UserProfile.objects.all()
-    serializer_class = ProfileSerializer
-
-class ProfileDetails(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    queryset = UserProfile.objects.all()
-    serializer_class = ProfileSerializer
 
 class FollowersList(views.APIView):
     authentication_classes = [JWTAuthentication]

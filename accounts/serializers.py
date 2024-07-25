@@ -1,10 +1,11 @@
 from rest_framework import serializers
-from .models import Profile, Follow, User
+from .models import Follow, User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'username')
+        fields = ('id', 'email', 'username','profile_pic', 'bio', 'website')
+        
         
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
@@ -27,12 +28,7 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 class ResetPasswordEmailSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
-class ProfileSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
 
-    class Meta:
-        model = Profile
-        fields = ['id', 'user', 'profile_pic', 'bio', 'website']
 
 class FollowSerializer(serializers.ModelSerializer):
     follower = UserSerializer(read_only=True)
