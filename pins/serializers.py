@@ -6,11 +6,23 @@ class LikePinsSerializer(serializers.ModelSerializer):
     class Meta:
         model = LikePins
         fields = ['user', 'pin']
+        
+    def create(self, validated_data):
+        request = self.context.get('request', None)
+        if request:
+            validated_data['user'] = request.user
+        return super().create(validated_data)
 
 class SavePinsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SavePins
         fields = ['user', 'pin']
+        
+    def create(self, validated_data):
+        request = self.context.get('request', None)
+        if request:
+            validated_data['user'] = request.user
+        return super().create(validated_data)
 
 
 class CommentRepliesSerializer(serializers.ModelSerializer):
@@ -22,6 +34,12 @@ class CommentRepliesSerializer(serializers.ModelSerializer):
 
     def get_replies(self, obj):
         return CommentRepliesSerializer(obj.replies.all(), many=True).data
+    
+    def create(self, validated_data):
+        request = self.context.get('request', None)
+        if request:
+            validated_data['user'] = request.user
+        return super().create(validated_data)
 
 class CommentSerializer(serializers.ModelSerializer):
     replies = CommentRepliesSerializer(many=True, read_only=True)
@@ -29,6 +47,11 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['id', 'pin', 'user', 'content', 'created_date', 'replies']
+    def create(self, validated_data):
+        request = self.context.get('request', None)
+        if request:
+            validated_data['user'] = request.user
+        return super().create(validated_data)
 
     def to_representation(self, instance):
         data = super().to_representation(instance)
@@ -48,7 +71,14 @@ class PinSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'title', 'user', 'description', 'link', 'board', 'image', 'video', 'date_created',
              'comments', 'likes_count', 'saves_count'
-        ]                           
+        ]
+    def create(self, validated_data):
+        request = self.context.get('request', None)
+        if request:
+            validated_data['user'] = request.user
+        return super().create(validated_data)
+    
+                            
     def get_likes_count(self, obj):
         return obj.likes.count()
 

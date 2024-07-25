@@ -35,6 +35,9 @@ class PinListCreate(generics.ListCreateAPIView):
             queryset = queryset.distinct()
 
         return queryset
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 
@@ -62,7 +65,6 @@ class LikePin(APIView):
 
         return Response({'message': message}, status=status.HTTP_200_OK)
 
-
 class SavePin(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated] 
@@ -84,8 +86,8 @@ class SavePin(APIView):
             # Otherwise, save the pin
             SavePins.objects.create(user=user, pin=pin)
             message = 'Pin saved successfully'
-
         return Response({'message': message}, status=status.HTTP_200_OK)
+    
 class UserCreatedPins(generics.ListAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated] 
@@ -94,6 +96,7 @@ class UserCreatedPins(generics.ListAPIView):
     def get_queryset(self):
         user = self.request.user
         return Pin.objects.filter(user=user)
+    
 
 class UserSavedPins(generics.ListAPIView):
     authentication_classes = [JWTAuthentication]
@@ -108,6 +111,7 @@ class PinDetails(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated] 
     queryset = Pin.objects.all()
     serializer_class = PinSerializer
+    
 
 class CommentListCreate(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
@@ -115,11 +119,17 @@ class CommentListCreate(generics.ListCreateAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
 class CommentRepliesCreate(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]  
     queryset = CommentReplies.objects.all()
     serializer_class = CommentRepliesSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
     
 class CommentDetails(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
@@ -127,8 +137,10 @@ class CommentDetails(generics.RetrieveUpdateDestroyAPIView):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     
+    
 class CommentReplyDetails(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]  
     queryset = CommentReplies.objects.all()
     serializer_class = CommentRepliesSerializer
+    
