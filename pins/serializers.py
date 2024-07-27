@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Pin, Comment, CommentReplies, LikePins, SavePins
 from accounts.serializers import UserSerializer
-from boards.serializers import BoardSerializer
 
 class LikePinsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -63,11 +62,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class PinSerializer(serializers.ModelSerializer):
     user =  UserSerializer(read_only=True)
-    board = BoardSerializer(read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
     likes_count = serializers.SerializerMethodField()
     saves_count = serializers.SerializerMethodField()
-
     class Meta:
         model = Pin
         fields = [

@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from .models import Board
+from pins.serializers import PinSerializer
 
 class BoardSerializer(serializers.ModelSerializer):
+    pins = PinSerializer(read_only=True, many=True)
     class Meta:
         model = Board
         fields = '__all__'
