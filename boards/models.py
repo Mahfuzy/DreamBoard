@@ -6,6 +6,7 @@ from django.conf import settings
 
 class Board(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='board_user')
+    pin = models.ManyToManyField('pins.Pin', related_name='pins')
     title = models.CharField(max_length=250)
     cover = models.ImageField(upload_to='boards', default='boards/default.png', null=True)
     is_private = models.BooleanField(default=False)
