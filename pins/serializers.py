@@ -26,6 +26,7 @@ class SavePinsSerializer(serializers.ModelSerializer):
 
 
 class CommentRepliesSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     replies = serializers.SerializerMethodField()
 
     class Meta:
@@ -42,6 +43,7 @@ class CommentRepliesSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 class CommentSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
     replies = CommentRepliesSerializer(many=True, read_only=True)
 
     class Meta:
