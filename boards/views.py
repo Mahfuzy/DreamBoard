@@ -37,13 +37,3 @@ class AddPinToBoard(views.APIView):
         serializer = BoardSerializer(board)
         return Response(serializer.data)
 
-class FollowedBoardsView(views.APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        current_user = request.user
-        followed_user_ids = Follow.objects.filter(follower=current_user).values_list('followed_user_id', flat=True)
-        boards = Board.objects.filter(user_id__in=followed_user_ids)
-        serializer = BoardSerializer(boards, many=True)
-        return Response(serializer.data)

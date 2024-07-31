@@ -13,6 +13,4 @@ urlpatterns = [
     path('users/<str:username>/unfollow/', UnfollowUser.as_view(), name='unfollow_user'),
     path('users/<str:username>/followers/', FollowersList.as_view(), name='user-followers'),
     path('users/<str:username>/following/', FollowingList.as_view(), name='user-following'),
-    path('users/followers_count/<str:username>/', FollowersCount.as_view(), name='followers-count'),
-    path('users/following_count/<str:username>/', FollowingCount.as_view(), name='following_count')
 ]

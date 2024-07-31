@@ -194,20 +194,4 @@ class UnfollowUser(views.APIView):
         follow = get_object_or_404(Follow, follower=request.user, followed_user=user_to_unfollow)
         follow.delete()
         return Response({'message': 'User unfollowed successfully'}, status=status.HTTP_204_NO_CONTENT)
-
-class FollowersCount(views.APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    def get(self, request, username):
-        user = get_object_or_404(User, username=username)
-        followers_count = user.followers.count()
-        return Response({'followers_count': followers_count}, status=status.HTTP_200_OK)
-    
-class FollowingCount(views.APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    def get(self, request, username):
-        user = get_object_or_404(User, username=username)
-        following_count = user.following.count()
-        return Response({'following_count': following_count}, status=status.HTTP_200_OK)
     
