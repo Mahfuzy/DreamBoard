@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import UserView, FollowUser, UnfollowUser, FollowersList, FollowingList, UserDetails, RegisterAPIView, LogoutAPIView, FollowingCount, ChangePasswordView,ActivateAPIView, LoginAPIView
+from .views import UserView, FollowUser, UnfollowUser, FollowersList, FollowingList, UserDetails, RegisterAPIView, LogoutAPIView, ChangePasswordView,ActivateAPIView, LoginAPIView
 
 urlpatterns = [
     path('users/', UserView.as_view(), name='users'),
