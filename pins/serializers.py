@@ -34,11 +34,9 @@ class CommentRepliesSerializer(serializers.ModelSerializer):
         fields = ['id', 'comment', 'user', 'content', 'created_date', 'parent_reply', 'replies']
 
     # def get_replies(self, obj):
-    #     # Limit the depth of replies to avoid infinite recursion
     #     return CommentRepliesSerializer(obj.replies.all(), many=True).data
     
     def get_replies(self, obj):
-        # For simplicity, you might want to exclude nested replies
         return []
     def create(self, validated_data):
         request = self.context.get('request', None)
