@@ -24,6 +24,7 @@ class SavePinsSerializer(serializers.ModelSerializer):
             validated_data['user'] = request.user
         return super().create(validated_data)
 
+
 class CommentRepliesSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     replies = serializers.SerializerMethodField()
@@ -32,9 +33,13 @@ class CommentRepliesSerializer(serializers.ModelSerializer):
         model = CommentReplies
         fields = ['id', 'comment', 'user', 'content', 'created_date', 'parent_reply', 'replies']
 
-    def get_replies(self, obj):
-        return CommentRepliesSerializer(obj.replies.all(), many=True).data
+    # def get_replies(self, obj):
+    #     # Limit the depth of replies to avoid infinite recursion
+    #     return CommentRepliesSerializer(obj.replies.all(), many=True).data
     
+    def get_replies(self, obj):
+        # For simplicity, you might want to exclude nested replies
+        return []
     def create(self, validated_data):
         request = self.context.get('request', None)
         if request:
@@ -52,7 +57,6 @@ class CommentSerializer(serializers.ModelSerializer):
         
     def get_replies_count(self, obj):
         return obj.replies.count()
-
     def create(self, validated_data):
         request = self.context.get('request', None)
         if request:
@@ -65,20 +69,19 @@ class CommentSerializer(serializers.ModelSerializer):
             data['replies'] = []  # If there are no replies, return an empty list
         return data
 
+
 class PinSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
     comments_count = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
     saves_count = serializers.SerializerMethodField()
-    
     class Meta:
         model = Pin
         fields = [
             'id', 'title', 'user', 'description', 'link', 'board', 'image', 'video', 'date_created',
              'comments', 'comments_count', 'likes_count', 'saves_count'
         ]
-    
     def create(self, validated_data):
         request = self.context.get('request', None)
         if request:
@@ -87,13 +90,12 @@ class PinSerializer(serializers.ModelSerializer):
     
     def get_comments_count(self, obj):
         return obj.comments.count()
-    
     def get_likes_count(self, obj):
         return obj.likes.count()
-    
+
     def get_saves_count(self, obj):
         return obj.savepins_set.count()
-    
+
     def validate(self, data):
         if not data.get('title'):
             raise serializers.ValidationError("Title cannot be empty.")
