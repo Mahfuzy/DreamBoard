@@ -25,9 +25,13 @@ class Pin(models.Model):
     description = models.TextField()
     date_created = models.DateTimeField(default=timezone.now)
     likes = models.ManyToManyField(User, related_name='liked_pins', blank=True)
+    
+    class Meta:
+        ordering = ['-date_created']
 
     def __str__(self):
         return self.title
+    
 
     def clean(self):
         super().clean()
