@@ -45,10 +45,14 @@ class CommentRepliesSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     replies = CommentRepliesSerializer(many=True, read_only=True)
+    replies_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
-        fields = ['id', 'pin', 'user', 'content', 'created_date', 'replies']
+        fields = ['id', 'pin', 'user', 'content', 'created_date', 'replies', 'replies_count']
+        
+    def get_replies_count(self, obj):
+        return obj.replies.count()
     def create(self, validated_data):
         request = self.context.get('request', None)
         if request:
@@ -65,13 +69,14 @@ class CommentSerializer(serializers.ModelSerializer):
 class PinSerializer(serializers.ModelSerializer):
     user =  UserSerializer(read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
+    comments_count = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()
     saves_count = serializers.SerializerMethodField()
     class Meta:
         model = Pin
         fields = [
             'id', 'title', 'user', 'description', 'link', 'board', 'image', 'video', 'date_created',
-             'comments', 'likes_count', 'saves_count'
+             'comments', 'comments_count', 'likes_count', 'saves_count'
         ]
     def create(self, validated_data):
         request = self.context.get('request', None)
@@ -79,7 +84,8 @@ class PinSerializer(serializers.ModelSerializer):
             validated_data['user'] = request.user
         return super().create(validated_data)
     
-                            
+    def get_comments_count(self, obj):
+        return obj.comments.count()
     def get_likes_count(self, obj):
         return obj.likes.count()
 
