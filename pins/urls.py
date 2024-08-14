@@ -1,5 +1,4 @@
 from django.urls import path
-
 from .views import (
     PinListCreate,
     PinDetails,
@@ -16,12 +15,12 @@ from .views import (
 urlpatterns = [
     path('pins/', PinListCreate.as_view(), name='pin-list-create'),
     path('pins/<int:pk>/', PinDetails.as_view(), name='pin-details'),
-    path('pins/<int:pk>/save/', SavePin.as_view(), name='save-pin'),
-    path('pins/<int:pk>/like/', LikePin.as_view(), name="like-pin"),
+    path('pins/<int:pin_id>/save/', SavePin.as_view(), name='save-pin'),
+    path('pins/<int:pin_id>/like/', LikePin.as_view(), name='like-pin'),
     path('pins/created/', UserCreatedPins.as_view(), name='user-created-pins'),
     path('pins/saved/', UserSavedPins.as_view(), name='user-saved-pins'),
-    path('pins/<int:pk>/comments/', CommentListCreate.as_view(), name='comment-list-create'),
-    path('pins/<int:pk>/comments/<int:pk>/', CommentDetails.as_view(), name='comment-detail'),
-    path('pins/<int:pk>/comments/<int:pk>/replies/', CommentRepliesCreate.as_view(), name='comment-replies-create'),
-    path('pins/<int:pk>/comments/<int:pk>/replies/<int:reply_pk>/', CommentReplyDetails.as_view(), name='reply-detail'),
+    path('pins/<int:pin_id>/comments/', CommentListCreate.as_view(), name='comment-list-create'),
+    path('pins/<int:pin_id>/comments/<int:pk>/', CommentDetails.as_view(), name='comment-detail'),
+    path('pins/<int:pin_id>/comments/<int:pk>/replies/', CommentRepliesCreate.as_view(), name='comment-replies-create'),
+    path('pins/<int:pin_id>/comments/<int:pk>/replies/<int:reply_pk>/', CommentReplyDetails.as_view(), name='reply-detail'),
 ]

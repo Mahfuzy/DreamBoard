@@ -45,9 +45,9 @@ class LikePin(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated] 
 
-    def post(self, request, pk):
+    def post(self, request, pin_id):
         try:
-            pin = Pin.objects.get(pk)
+            pin = Pin.objects.get(pk=pin_id)
         except Pin.DoesNotExist:
             return Response({'error': 'Pin not found'}, status=status.HTTP_404_NOT_FOUND)
 
@@ -69,9 +69,9 @@ class SavePin(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated] 
 
-    def post(self, request, pk):
+    def post(self, request, pin_id):
         try:
-            pin = Pin.objects.get(pk)
+            pin = Pin.objects.get(pk=pin_id)
         except Pin.DoesNotExist:
             return Response({'error': 'Pin not found'}, status=status.HTTP_404_NOT_FOUND)
 
