@@ -11,8 +11,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class PinListCreate(generics.ListCreateAPIView):
-    # authentication_classes = [JWTAuthentication]
-    permission_classes = [AllowAny] 
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated] 
     queryset = Pin.objects.all()
     serializer_class = PinSerializer
     filterset_class = PinFilter
