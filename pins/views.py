@@ -115,10 +115,14 @@ class PinDetails(generics.RetrieveUpdateDestroyAPIView):
 
 class CommentListCreate(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]  
-    queryset = Comment.objects.all()
+    permission_classes = [IsAuthenticated]
     serializer_class = CommentSerializer
-    
+
+    def get_queryset(self):
+        pin_id = self.kwargs.get('pin_id')
+        queryset = Comment.objects.filter(pin=pin_id)
+        return queryset
+
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
     
