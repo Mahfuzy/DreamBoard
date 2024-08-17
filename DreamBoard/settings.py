@@ -103,9 +103,7 @@ MIDDLEWARE = [
 
 CSRF_COOKIE_SECURE = True 
 
-CORS_ALLOWED_ORIGINS = [
-    'dreamboard.onrender.com',
-]
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
