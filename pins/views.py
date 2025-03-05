@@ -1,150 +1,138 @@
-from rest_framework import generics, viewsets, status
-from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.shortcuts import redirect
-from django.http import JsonResponse
-from .models import Pin, Comment, CommentReplies, LikePins, SavePins
-from .serializers import PinSerializer, CommentSerializer, CommentRepliesSerializer
-from .filters import PinFilter
-from accounts.models import Follow
+from django.shortcuts import get_object_or_404
+from rest_framework import generics, views
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+
+from .models import Board, Pin, Comment, CommentReplies, LikePins, SavePins
+from .serializers import BoardSerializer, PinSerializer, CommentSerializer, CommentRepliesSerializer
+from .filters import BoardFilter, PinFilter
+from accounts.models import Follow
+
+class BoardListCreate(generics.ListCreateAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = Board.objects.all()
+    serializer_class = BoardSerializer
+    filterset_class = BoardFilter
+
+    @swagger_auto_schema(
+        operation_description="Retrieve a list of boards or create a new board.",
+        responses={200: BoardSerializer(many=True), 201: BoardSerializer, 400: "Bad Request"}
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Create a new board.",
+        request_body=BoardSerializer,
+        responses={201: BoardSerializer, 400: "Bad Request"}
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
+class BoardDetails(generics.RetrieveUpdateDestroyAPIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    queryset = Board.objects.all()
+    serializer_class = BoardSerializer
+
+    @swagger_auto_schema(
+        operation_description="Retrieve, update, or delete a specific board.",
+        responses={200: BoardSerializer, 204: "No Content", 400: "Bad Request", 404: "Not Found"}
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Update a specific board.",
+        request_body=BoardSerializer,
+        responses={200: BoardSerializer, 400: "Bad Request", 404: "Not Found"}
+    )
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
+
+    @swagger_auto_schema(
+        operation_description="Delete a specific board.",
+        responses={204: "No Content", 400: "Bad Request", 404: "Not Found"}
+    )
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)
+
+class AddPinToBoard(views.APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="Add a pin to a specific board.",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'id': openapi.Schema(type=openapi.TYPE_INTEGER, description='Pin ID')
+            },
+            required=['id']
+        ),
+        responses={200: BoardSerializer, 400: "Bad Request", 404: "Not Found"}
+    )
+    def post(self, request, pk):
+        board = get_object_or_404(Board, pk=pk)
+        pin_id = request.data.get("id")
+
+        if not pin_id:
+            return Response({"error": "Pin ID is required"}, status=400)
+
+        board.pins.add(pin_id)
+        serializer = BoardSerializer(board)
+        return Response(serializer.data)
 
 class PinListCreate(generics.ListCreateAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated]
     queryset = Pin.objects.all()
     serializer_class = PinSerializer
     filterset_class = PinFilter
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
+    @swagger_auto_schema(
+        operation_description="Retrieve a list of pins or create a new pin.",
+        responses={200: PinSerializer(many=True), 201: PinSerializer, 400: "Bad Request"}
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
-        # Filter by followed users
-        if self.request.query_params.get('followed', None):
-            current_user = self.request.user
-            followed_user_ids = Follow.objects.filter(follower=current_user).values_list('followed_user_id', flat=True)
-            queryset = queryset.filter(user_id__in=followed_user_ids)
+    @swagger_auto_schema(
+        operation_description="Create a new pin.",
+        request_body=PinSerializer,
+        responses={201: PinSerializer, 400: "Bad Request"}
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
 
-        # Filter by tags
-        tags = self.request.query_params.get('tags', None)
-        if tags:
-            tags_list = tags.split(',')
-            for tag in tags_list:
-                queryset = queryset.filter(tags__icontains=tag)
-            queryset = queryset.distinct()
-
-        return queryset
-    
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-
-class LikePin(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated] 
-
-    def post(self, request, pin_id):
-        try:
-            pin = Pin.objects.get(pk=pin_id)
-        except Pin.DoesNotExist:
-            return Response({'error': 'Pin not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        user = request.user
-
-        try:
-            like = LikePins.objects.get(user=user, pin=pin)
-            # If the user has already liked the pin, unlike it
-            like.delete()
-            message = 'Pin unliked successfully'
-        except LikePins.DoesNotExist:
-            # Otherwise, like the pin
-            LikePins.objects.create(user=user, pin=pin)
-            message = 'Pin liked successfully'
-
-        return Response({'message': message}, status=status.HTTP_200_OK)
-
-class SavePin(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated] 
-
-    def post(self, request, pin_id):
-        try:
-            pin = Pin.objects.get(pk=pin_id)
-        except Pin.DoesNotExist:
-            return Response({'error': 'Pin not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        user = request.user
-
-        try:
-            saved_pin = SavePins.objects.get(user=user, pin=pin)
-            # If the user has already saved the pin, unsave it
-            saved_pin.delete()
-            message = 'Pin unsaved successfully'
-        except SavePins.DoesNotExist:
-            # Otherwise, save the pin
-            SavePins.objects.create(user=user, pin=pin)
-            message = 'Pin saved successfully'
-        return Response({'message': message}, status=status.HTTP_200_OK)
-    
-class UserCreatedPins(generics.ListAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated] 
-    serializer_class = PinSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        return Pin.objects.filter(user=user)
-    
-
-class UserSavedPins(generics.ListAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated] 
-    serializer_class = PinSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        return Pin.objects.filter(savepins__user=user)
 class PinDetails(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated]
     queryset = Pin.objects.all()
     serializer_class = PinSerializer
-    
 
-class CommentListCreate(generics.ListCreateAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = CommentSerializer
+    @swagger_auto_schema(
+        operation_description="Retrieve, update, or delete a specific pin.",
+        responses={200: PinSerializer, 204: "No Content", 400: "Bad Request", 404: "Not Found"}
+    )
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
 
-    def get_queryset(self):
-        pin_id = self.kwargs.get('pin_id')
-        queryset = Comment.objects.filter(pin=pin_id)
-        return queryset
+    @swagger_auto_schema(
+        operation_description="Update a specific pin.",
+        request_body=PinSerializer,
+        responses={200: PinSerializer, 400: "Bad Request", 404: "Not Found"}
+    )
+    def put(self, request, *args, **kwargs):
+        return super().put(request, *args, **kwargs)
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-    
-class CommentRepliesCreate(generics.ListCreateAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]  
-    queryset = CommentReplies.objects.all()
-    serializer_class = CommentRepliesSerializer
-    
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-    
-class CommentDetails(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]  
-    queryset = Comment.objects.all()
-    serializer_class = CommentSerializer
-    
-    
-class CommentReplyDetails(generics.RetrieveUpdateDestroyAPIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]  
-    queryset = CommentReplies.objects.all()
-    serializer_class = CommentRepliesSerializer
-    
+    @swagger_auto_schema(
+        operation_description="Delete a specific pin.",
+        responses={204: "No Content", 400: "Bad Request", 404: "Not Found"}
+    )
+    def delete(self, request, *args, **kwargs):
+        return super().delete(request, *args, **kwargs)
